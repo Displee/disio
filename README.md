@@ -12,7 +12,7 @@ Features:
 implementation 'com.displee.io:disio:1.0'
 ```
 
-###Initialization
+### Initialization
 ```Kotlin
 //Set capacity for best performance
 val outputBuffer = OutputBuffer(10)
@@ -24,7 +24,7 @@ val array = byteArrayOf(...)
 val inputBuffer = InputBuffer(array)
 ```
 
-###LSB mode (least significant bit)
+### LSB mode (least significant bit)
 ```kotlin
 val outputBuffer = OutputBuffer(5)
 outputBuffer.lsb()
@@ -35,7 +35,7 @@ val value = inputBuffer.readShort()
 ...
 ```
 
-###MSB mode (most significant bit)
+### MSB mode (most significant bit)
 ```kotlin
 val outputBuffer = OutputBuffer(4)
 outputBuffer.lsb()
