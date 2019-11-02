@@ -1,3 +1,5 @@
+package com.displee.io
+
 public abstract class Buffer {
 
     protected var data: ByteArray
@@ -22,15 +24,15 @@ public abstract class Buffer {
     }
 
     public fun startBitAccess() {
-        bitPosition = offset * 8
+        bitPosition = offset * BIT_OFFSET
     }
 
     public fun getBitPosition(i: Int): Int {
-        return 8 * i - bitPosition
+        return BIT_OFFSET * i - bitPosition
     }
 
     public fun finishBitAccess() {
-        offset = (bitPosition + 7) / 8
+        offset = (bitPosition + 7) / BIT_OFFSET
     }
 
     public fun jump(offset: Int) {
@@ -64,6 +66,7 @@ public abstract class Buffer {
     }
 
     companion object {
+        private const val BIT_OFFSET = 8
         val BIT_MASK = IntArray(32) { i ->
             (1 shl i) - 1
         }

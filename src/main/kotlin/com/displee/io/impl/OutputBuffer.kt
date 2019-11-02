@@ -1,6 +1,6 @@
-package impl
+package com.displee.io.impl
 
-import Buffer
+import com.displee.io.Buffer
 
 public class OutputBuffer(capacity: Int) : Buffer(capacity) {
 
