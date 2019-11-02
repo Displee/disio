@@ -1,5 +1,5 @@
-import impl.InputBuffer
-import impl.OutputBuffer
+import com.displee.io.impl.InputBuffer
+import com.displee.io.impl.OutputBuffer
 import org.junit.jupiter.api.Test
 import java.util.concurrent.ThreadLocalRandom
 
@@ -65,12 +65,13 @@ class InputBufferTest {
     @Test
     public fun testBytes() {
         val data = generateRandomData()
+        val size = data.size
 
-        val outputBuffer = OutputBuffer(data.size)
+        val outputBuffer = OutputBuffer(size)
         outputBuffer.write(data)
 
         val inputBuffer = InputBuffer(outputBuffer.array())
-        assert(inputBuffer.read(data.size).contentEquals(data))
+        assert(inputBuffer.read(size).contentEquals(data))
     }
 
     @Test
@@ -86,15 +87,19 @@ class InputBufferTest {
 
     private fun generateRandomData(): ByteArray {
         return byteArrayOf(
-            ThreadLocalRandom.current().nextInt(1, 128).toByte(),
-            ThreadLocalRandom.current().nextInt(1, 128).toByte(),
-            ThreadLocalRandom.current().nextInt(1, 128).toByte(),
-            ThreadLocalRandom.current().nextInt(1, 128).toByte(),
-            ThreadLocalRandom.current().nextInt(1, 128).toByte(),
-            ThreadLocalRandom.current().nextInt(1, 128).toByte(),
-            ThreadLocalRandom.current().nextInt(1, 128).toByte(),
-            ThreadLocalRandom.current().nextInt(1, 128).toByte()
+            getRandomValue(1, 128).toByte(),
+            getRandomValue(1, 128).toByte(),
+            getRandomValue(1, 128).toByte(),
+            getRandomValue(1, 128).toByte(),
+            getRandomValue(1, 128).toByte(),
+            getRandomValue(1, 128).toByte(),
+            getRandomValue(1, 128).toByte(),
+            getRandomValue(1, 128).toByte()
         )
+    }
+    
+    private fun getRandomValue(min: Int, max: Int): Int {
+        return ThreadLocalRandom.current().nextInt(min, max)
     }
 
 }
