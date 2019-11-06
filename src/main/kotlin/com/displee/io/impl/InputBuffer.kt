@@ -1,8 +1,9 @@
 package com.displee.io.impl
 
 import com.displee.io.Buffer
+import java.nio.ByteBuffer
 
-public class InputBuffer(data: ByteArray) : Buffer(data) {
+public open class InputBuffer(data: ByteArray) : Buffer(data) {
 
     public fun read(): Byte {
         if (offset >= data.size) {
@@ -189,7 +190,7 @@ public class InputBuffer(data: ByteArray) : Buffer(data) {
         return replaceSpecialCharacters(data, currentOffset, length)
     }
 
-    public fun readStringOld(): String {
+    public fun readStringRaw(): String {
         val start = offset
         while (data[offset++].toInt() != 10) {
 
@@ -198,22 +199,23 @@ public class InputBuffer(data: ByteArray) : Buffer(data) {
     }
 
     public fun readBit(position: Int): Int {
+        check(!hasBitAccess()) { "No bit access." }
         var i = position
-        var i_9_ = this.bitPosition shr 3
-        var i_10_ = 8 - (this.bitPosition and 0x7)
-        var i_11_ = 0
+        var byteOffset = this.bitPosition shr 3
+        var bitMaskIndex = 8 - (this.bitPosition and 0x7)
+        var value = 0
         this.bitPosition += i
-        while (i > i_10_) {
-            i_11_ += data[i_9_++].toInt() and BIT_MASK[i_10_] shl i - i_10_
-            i -= i_10_
-            i_10_ = 8
+        while (i > bitMaskIndex) {
+            value += data[byteOffset++].toInt() and BIT_MASK[bitMaskIndex] shl i - bitMaskIndex
+            i -= bitMaskIndex
+            bitMaskIndex = 8
         }
-        i_11_ += if (i == i_10_) {
-            data[i_9_].toInt() and BIT_MASK[i_10_]
+        value += if (i == bitMaskIndex) {
+            data[byteOffset].toInt() and BIT_MASK[bitMaskIndex]
         } else {
-            data[i_9_].toInt() shr i_10_ - i and BIT_MASK[i]
+            data[byteOffset].toInt() shr bitMaskIndex - i and BIT_MASK[i]
         }
-        return i_11_
+        return value
     }
 
     companion object {

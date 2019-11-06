@@ -2,7 +2,7 @@ package com.displee.io.impl
 
 import com.displee.io.Buffer
 
-public class OutputBuffer(capacity: Int) : Buffer(capacity) {
+public open class OutputBuffer(capacity: Int) : Buffer(capacity) {
 
     public fun write(value: Int): OutputBuffer {
         return write(value.toByte())
@@ -189,31 +189,32 @@ public class OutputBuffer(capacity: Int) : Buffer(capacity) {
         return this
     }
 
-    fun writeStringOld(string: String) {
-        write(string.toByteArray())
-        write(10)
+    fun writeStringRaw(string: String): OutputBuffer {
+        return write(string.toByteArray()).write(10)
     }
 
-    public fun writeBits(bit: Int, value: Int) {
+    public fun writeBit(bit: Int, value: Int): OutputBuffer {
+        check(!hasBitAccess()) { "No bit access." }
         var numBits = bit
         var bytePos = bitPosition shr 3
-        var bitOffset = 8 - (bitPosition and 7)
+        var bitMaskIndex = 8 - (bitPosition and 7)
         bitPosition += numBits
-        while (numBits > bitOffset) {
+        while (numBits > bitMaskIndex) {
             ensureCapacity(bytePos)
-            data[bytePos] = (data[bytePos].toInt() and BIT_MASK[bitOffset].inv()).toByte()
-            data[bytePos++] = (data[bytePos++].toInt() or (value shr numBits - bitOffset and BIT_MASK[bitOffset])).toByte()
-            numBits -= bitOffset
-            bitOffset = 8
+            data[bytePos] = (data[bytePos].toInt() and BIT_MASK[bitMaskIndex].inv()).toByte()
+            data[bytePos++] = (data[bytePos++].toInt() or (value shr numBits - bitMaskIndex and BIT_MASK[bitMaskIndex])).toByte()
+            numBits -= bitMaskIndex
+            bitMaskIndex = 8
         }
         ensureCapacity(bytePos)
-        if (numBits == bitOffset) {
-            data[bytePos] = (data[bytePos].toInt() and BIT_MASK[bitOffset].inv()).toByte()
-            data[bytePos] = (data[bytePos].toInt() or (value and BIT_MASK[bitOffset])).toByte()
+        if (numBits == bitMaskIndex) {
+            data[bytePos] = (data[bytePos].toInt() and BIT_MASK[bitMaskIndex].inv()).toByte()
+            data[bytePos] = (data[bytePos].toInt() or (value and BIT_MASK[bitMaskIndex])).toByte()
         } else {
-            data[bytePos] = (data[bytePos].toInt() and (BIT_MASK[numBits] shl bitOffset - numBits).inv()).toByte()
-            data[bytePos] = (data[bytePos].toInt() or (value and BIT_MASK[numBits] shl bitOffset - numBits)).toByte()
+            data[bytePos] = (data[bytePos].toInt() and (BIT_MASK[numBits] shl bitMaskIndex - numBits).inv()).toByte()
+            data[bytePos] = (data[bytePos].toInt() or (value and BIT_MASK[numBits] shl bitMaskIndex - numBits)).toByte()
         }
+        return this
     }
 
     private fun ensureCapacity(size: Int) {
