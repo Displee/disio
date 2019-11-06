@@ -93,6 +93,7 @@ public abstract class Buffer {
 
     /**
      * Get the remaining bytes.
+     * @return Int The remaining bytes.
      */
     public fun remaining(): Int {
         return data.size - offset
@@ -100,6 +101,7 @@ public abstract class Buffer {
 
     /**
      * Get the data until the {@code offset}.
+     * @return ByteArray The data.
      */
     public fun array(): ByteArray {
         val array = ByteArray(offset)
@@ -109,6 +111,7 @@ public abstract class Buffer {
 
     /**
      * Get the raw data that's being used to read from or write to.
+     * @return ByteArray {@code data}
      */
     public fun rawArray(): ByteArray {
         return data
