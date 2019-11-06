@@ -1,5 +1,7 @@
 # DisIO
-DisIO is a small standalone library which allows you to perform I/O operations like Java's `ByteBuffer` class. However the implementations of this class are all package-private and thus limits the usage of it.
+DisIO is a lightweight standalone library which allows you to perform I/O operations like Java's `ByteBuffer` class. However the implementations of this class are all package-private and thus limits the usage of it. For example: you can't extend the `ByteBuffer` or any of its implementations.
+
+The goal of this library is not alone to take away the limitations of Java's `ByteBuffer` class, but also to provide more I/O features.
 
 Features:
 * Basic I/O operations
