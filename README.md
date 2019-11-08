@@ -11,7 +11,7 @@ Features:
 
 ## Gradle
 ```
-implementation 'com.displee.io:disio:1.0'
+implementation 'com.displee:disio:1.0'
 ```
 
 ### Initialization
@@ -32,18 +32,18 @@ val outputBuffer = OutputBuffer(5)
 outputBuffer.lsb()
 outputBuffer.writeShort(67)
 val inputBuffer = InputBuffer(outputBuffer.array())
-inputBuffer.msb()
+inputBuffer.lsb()
 val value = inputBuffer.readShort()
 ...
 ```
 
-### MSB mode (most significant bit)
+### MSB mode (most significant bit, this is also the default operation mode)
 ```kotlin
 val outputBuffer = OutputBuffer(4)
-outputBuffer.lsb()
+outputBuffer.msb()
 outputBuffer.writeInt(61263)
 val inputBuffer = InputBuffer(outputBuffer.array())
-inputBuffer.lsb()
+inputBuffer.msb()
 val value = inputBuffer.readInt()
 ...
 ```
