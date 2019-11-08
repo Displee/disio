@@ -14,7 +14,7 @@ repositories {
     mavenCentral()
 }
 
-group 'com.displee.io'
+group 'com.displee'
 archivesBaseName = "disio"
 version '1.0'
 
@@ -39,12 +39,12 @@ test {
 }
 
 task javadocJar(type: Jar) {
-    classifier = 'javadoc'
+    archiveClassifier = 'javadoc'
     from javadoc
 }
 
 task sourcesJar(type: Jar) {
-    classifier = 'sources'
+    archiveClassifier = 'sources'
     from sourceSets.main.allSource
 }
 
