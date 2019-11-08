@@ -74,6 +74,7 @@ uploadArchives {
                 packaging 'jar'
                 // optionally artifactId can be defined here
                 description 'A small standalone library that allows you to perform I/O operations.'
+                url 'https://github.com/Displee/disio'
 
                 scm {
                     connection 'scm:git:git://github.com/Displee/disio.git'
