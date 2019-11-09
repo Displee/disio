@@ -41,18 +41,18 @@ public abstract class Buffer {
         if (offset == 0) {
             throw IllegalAccessException("Offset has to be at least 1!")
         }
-        bitPosition = offset * BIT_OFFSET
+        bitPosition = offset * BYTE_SIZE
     }
 
     public fun getBitPosition(i: Int): Int {
-        return BIT_OFFSET * i - bitPosition
+        return BYTE_SIZE * i - bitPosition
     }
 
     /**
      * Finish the bit access.
      */
     public fun finishBitAccess() {
-        offset = (bitPosition + 7) / BIT_OFFSET
+        offset = (bitPosition + 7) / BYTE_SIZE
         bitPosition = 0
     }
 
@@ -118,7 +118,10 @@ public abstract class Buffer {
     }
 
     companion object {
-        private const val BIT_OFFSET = 8
+        /**
+         * The size of a byte in bits
+         */
+        const val BYTE_SIZE = 8
         val BIT_MASK = IntArray(32) { i ->
             (1 shl i) - 1
         }
