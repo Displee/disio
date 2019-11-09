@@ -6,8 +6,9 @@ The goal of this library is not alone to take away the limitations of Java's `By
 Features:
 * Basic I/O operations
 * Array operations
-* Signed and unsigned values
-* LSB (least significant bit) and MSB (most significant bit)
+* Signed and unsigned operations
+* Bit operations
+* LSB (least significant bit) and MSB (most significant bit) support
 
 ## Gradle
 ```
