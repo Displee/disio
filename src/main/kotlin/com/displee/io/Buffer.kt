@@ -50,7 +50,7 @@ public abstract class Buffer {
      * Finish the bit access.
      */
     public fun finishBitAccess() {
-        offset = (bitPosition + 7) / BYTE_SIZE
+        offset = (bitPosition + (BYTE_SIZE - 1)) / BYTE_SIZE
         bitPosition = 0
     }
 
