@@ -5,9 +5,7 @@ import com.displee.io.Buffer
 public open class InputBuffer(data: ByteArray) : Buffer(data) {
 
     public fun read(): Byte {
-        if (offset >= data.size) {
-            throw IllegalAccessException("No data left to read.")
-        }
+        check(offset >= data.size) { "No data left to read." }
         return data[offset++]
     }
 

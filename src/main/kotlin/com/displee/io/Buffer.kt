@@ -21,7 +21,7 @@ public abstract class Buffer {
     }
 
     /**
-     * Switch to 'most significant bit' mode. This is also the default mode.
+     * Switch to 'most significant bit' mode.
      */
     public fun msb() {
         msb = true
@@ -38,9 +38,7 @@ public abstract class Buffer {
      * Start bit access.
      */
     public fun startBitAccess() {
-        if (offset == 0) {
-            throw IllegalAccessException("Offset has to be at least 1!")
-        }
+        check(offset == 0) { "Offset has to be at least 1! "}
         bitPosition = offset * BYTE_SIZE
     }
 
