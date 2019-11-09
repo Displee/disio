@@ -21,7 +21,7 @@ public abstract class Buffer {
     }
 
     /**
-     * Switch to 'most significant bit' mode. This is also the default mode.
+     * Switch to 'most significant bit' mode.
      */
     public fun msb() {
         msb = true
@@ -38,21 +38,19 @@ public abstract class Buffer {
      * Start bit access.
      */
     public fun startBitAccess() {
-        if (offset == 0) {
-            throw IllegalAccessException("Offset has to be at least 1!")
-        }
-        bitPosition = offset * BIT_OFFSET
+        check(offset == 0) { "Offset has to be at least 1! "}
+        bitPosition = offset * BYTE_SIZE
     }
 
     public fun getBitPosition(i: Int): Int {
-        return BIT_OFFSET * i - bitPosition
+        return BYTE_SIZE * i - bitPosition
     }
 
     /**
      * Finish the bit access.
      */
     public fun finishBitAccess() {
-        offset = (bitPosition + 7) / BIT_OFFSET
+        offset = (bitPosition + (BYTE_SIZE - 1)) / BYTE_SIZE
         bitPosition = 0
     }
 
@@ -118,7 +116,10 @@ public abstract class Buffer {
     }
 
     companion object {
-        private const val BIT_OFFSET = 8
+        /**
+         * The size of a byte in bits
+         */
+        const val BYTE_SIZE = 8
         val BIT_MASK = IntArray(32) { i ->
             (1 shl i) - 1
         }

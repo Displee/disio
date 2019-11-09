@@ -197,14 +197,14 @@ public open class OutputBuffer(capacity: Int) : Buffer(capacity) {
         check(!hasBitAccess()) { "No bit access." }
         var numBits = bit
         var bytePos = bitPosition shr 3
-        var bitMaskIndex = 8 - (bitPosition and 7)
+        var bitMaskIndex = BYTE_SIZE - (bitPosition and (BYTE_SIZE - 1))
         bitPosition += numBits
         while (numBits > bitMaskIndex) {
             ensureCapacity(bytePos)
             data[bytePos] = (data[bytePos].toInt() and BIT_MASK[bitMaskIndex].inv()).toByte()
             data[bytePos++] = (data[bytePos++].toInt() or (value shr numBits - bitMaskIndex and BIT_MASK[bitMaskIndex])).toByte()
             numBits -= bitMaskIndex
-            bitMaskIndex = 8
+            bitMaskIndex = BYTE_SIZE
         }
         ensureCapacity(bytePos)
         if (numBits == bitMaskIndex) {

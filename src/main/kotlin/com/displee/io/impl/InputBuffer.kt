@@ -1,14 +1,11 @@
 package com.displee.io.impl
 
 import com.displee.io.Buffer
-import java.nio.ByteBuffer
 
 public open class InputBuffer(data: ByteArray) : Buffer(data) {
 
     public fun read(): Byte {
-        if (offset >= data.size) {
-            throw IllegalAccessException("No data left to read.")
-        }
+        check(offset >= data.size) { "No data left to read." }
         return data[offset++]
     }
 
@@ -202,13 +199,13 @@ public open class InputBuffer(data: ByteArray) : Buffer(data) {
         check(!hasBitAccess()) { "No bit access." }
         var i = position
         var byteOffset = this.bitPosition shr 3
-        var bitMaskIndex = 8 - (this.bitPosition and 0x7)
+        var bitMaskIndex = BYTE_SIZE - (this.bitPosition and (BYTE_SIZE - 1))
         var value = 0
         this.bitPosition += i
         while (i > bitMaskIndex) {
             value += data[byteOffset++].toInt() and BIT_MASK[bitMaskIndex] shl i - bitMaskIndex
             i -= bitMaskIndex
-            bitMaskIndex = 8
+            bitMaskIndex = BYTE_SIZE
         }
         value += if (i == bitMaskIndex) {
             data[byteOffset].toInt() and BIT_MASK[bitMaskIndex]
