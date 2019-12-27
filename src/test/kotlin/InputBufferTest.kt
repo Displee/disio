@@ -85,6 +85,29 @@ class InputBufferTest {
         assert(inputBuffer.readString() == string)
     }
 
+    @Test
+    public fun testBit() {
+        val byte = 32
+        val bitId = 26
+        val bitValue = 17
+        val int = 1337
+
+        val outputBuffer = OutputBuffer(10)
+        outputBuffer.write(byte)
+        outputBuffer.startBitAccess()
+        outputBuffer.writeBit(bitId, bitValue)
+        outputBuffer.finishBitAccess()
+        outputBuffer.writeInt(int)
+
+        val inputBuffer = InputBuffer(outputBuffer.array())
+        assert(inputBuffer.readUnsigned() == byte)
+        inputBuffer.startBitAccess()
+        val bit = inputBuffer.readBit(bitId)
+        assert(bit == bitValue)
+        inputBuffer.finishBitAccess()
+        assert(inputBuffer.readInt() == int)
+    }
+
     private fun generateRandomData(): ByteArray {
         return byteArrayOf(
             getRandomValue(1, 128).toByte(),

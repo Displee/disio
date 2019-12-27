@@ -194,7 +194,7 @@ public open class OutputBuffer(capacity: Int) : Buffer(capacity) {
     }
 
     public fun writeBit(bit: Int, value: Int): OutputBuffer {
-        check(!hasBitAccess()) { "No bit access." }
+        check(hasBitAccess()) { "No bit access." }
         var numBits = bit
         var bytePos = bitPosition shr 3
         var bitMaskIndex = BYTE_SIZE - (bitPosition and (BYTE_SIZE - 1))
@@ -202,7 +202,7 @@ public open class OutputBuffer(capacity: Int) : Buffer(capacity) {
         while (numBits > bitMaskIndex) {
             ensureCapacity(bytePos)
             data[bytePos] = (data[bytePos].toInt() and BIT_MASK[bitMaskIndex].inv()).toByte()
-            data[bytePos++] = (data[bytePos++].toInt() or (value shr numBits - bitMaskIndex and BIT_MASK[bitMaskIndex])).toByte()
+            data[bytePos] = (data[bytePos++].toInt() or (value shr numBits - bitMaskIndex and BIT_MASK[bitMaskIndex])).toByte()
             numBits -= bitMaskIndex
             bitMaskIndex = BYTE_SIZE
         }

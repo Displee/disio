@@ -5,7 +5,7 @@ import com.displee.io.Buffer
 public open class InputBuffer(data: ByteArray) : Buffer(data) {
 
     public fun read(): Byte {
-        check(offset >= data.size) { "No data left to read." }
+        check(offset < data.size) { "No data left to read." }
         return data[offset++]
     }
 
@@ -196,14 +196,14 @@ public open class InputBuffer(data: ByteArray) : Buffer(data) {
     }
 
     public fun readBit(position: Int): Int {
-        check(!hasBitAccess()) { "No bit access." }
+        check(hasBitAccess()) { "No bit access." }
         var i = position
-        var byteOffset = this.bitPosition shr 3
-        var bitMaskIndex = BYTE_SIZE - (this.bitPosition and (BYTE_SIZE - 1))
+        var byteOffset = bitPosition shr 3
+        var bitMaskIndex = BYTE_SIZE - (bitPosition and (BYTE_SIZE - 1))
         var value = 0
-        this.bitPosition += i
+        bitPosition += i
         while (i > bitMaskIndex) {
-            value += data[byteOffset++].toInt() and BIT_MASK[bitMaskIndex] shl i - bitMaskIndex
+            value += (data[byteOffset++].toInt() and BIT_MASK[bitMaskIndex]) shl i - bitMaskIndex
             i -= bitMaskIndex
             bitMaskIndex = BYTE_SIZE
         }
