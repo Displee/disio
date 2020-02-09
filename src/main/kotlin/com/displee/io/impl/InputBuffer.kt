@@ -2,106 +2,106 @@ package com.displee.io.impl
 
 import com.displee.io.Buffer
 
-public open class InputBuffer(data: ByteArray) : Buffer(data) {
+open class InputBuffer(data: ByteArray) : Buffer(data) {
 
-    public fun read(): Byte {
+    fun read(): Byte {
         check(offset < data.size) { "No data left to read." }
         return data[offset++]
     }
 
-    public fun readUnsigned(): Int {
+    fun readUnsigned(): Int {
         return read().toInt() and 0xFF
     }
 
-    public fun read(length: Int): ByteArray {
+    fun read(length: Int): ByteArray {
         val data = ByteArray(length)
         read(data, 0, data.size)
         return data
     }
 
-    public fun read(data: ByteArray, offset: Int, length: Int) {
+    fun read(data: ByteArray, offset: Int, length: Int) {
         for (i in offset until length + offset) {
             data[i] = read()
         }
     }
 
-    public fun readUnsigned(length: Int): IntArray {
+    fun readUnsigned(length: Int): IntArray {
         val data = IntArray(length)
         readUnsigned(data, 0, data.size)
         return data
     }
 
-    public fun readUnsigned(data: IntArray, offset: Int, length: Int) {
+    fun readUnsigned(data: IntArray, offset: Int, length: Int) {
         for (i in offset until length + offset) {
             data[i] = readUnsigned()
         }
     }
 
-    public fun readShort(length: Int): ShortArray {
+    fun readShort(length: Int): ShortArray {
         val data = ShortArray(length)
         readShort(data, 0, data.size)
         return data
     }
 
-    public fun readShort(data: ShortArray, offset: Int, length: Int) {
+    fun readShort(data: ShortArray, offset: Int, length: Int) {
         for (i in offset until length + offset) {
             data[i] = readShort()
         }
     }
 
-    public fun readUnsignedShort(length: Int): IntArray {
+    fun readUnsignedShort(length: Int): IntArray {
         val data = IntArray(length)
         readUnsignedShort(data, 0, data.size)
         return data
     }
 
-    public fun readUnsignedShort(data: IntArray, offset: Int, length: Int) {
+    fun readUnsignedShort(data: IntArray, offset: Int, length: Int) {
         for (i in offset until length + offset) {
             data[i] = readUnsignedShort()
         }
     }
 
-    public fun readInt(length: Int): IntArray {
+    fun readInt(length: Int): IntArray {
         val data = IntArray(length)
         readInt(data, 0, data.size)
         return data
     }
 
-    public fun readInt(data: IntArray, offset: Int, length: Int) {
+    fun readInt(data: IntArray, offset: Int, length: Int) {
         for (i in offset until length + offset) {
             data[i] = readInt()
         }
     }
 
-    public fun readUnsignedInt(length: Int): LongArray {
+    fun readUnsignedInt(length: Int): LongArray {
         val data = LongArray(length)
         readUnsignedInt(data, 0, data.size)
         return data
     }
 
-    public fun readUnsignedInt(data: LongArray, offset: Int, length: Int) {
+    fun readUnsignedInt(data: LongArray, offset: Int, length: Int) {
         for (i in offset until length + offset) {
             data[i] = readUnsignedInt()
         }
     }
 
-    public fun readLong(length: Int): LongArray {
+    fun readLong(length: Int): LongArray {
         val data = LongArray(length)
         readLong(data, 0, data.size)
         return data
     }
 
-    public fun readLong(data: LongArray, offset: Int, length: Int) {
+    fun readLong(data: LongArray, offset: Int, length: Int) {
         for (i in offset until length + offset) {
             data[i] = readLong()
         }
     }
 
-    public fun readBoolean(): Boolean {
+    fun readBoolean(): Boolean {
         return read() == 1.toByte()
     }
 
-    public fun readShort(): Short {
+    fun readShort(): Short {
         var s = if (isLsb()) readUnsigned() + (readUnsigned() shl 8) else (readUnsigned() shl 8) + readUnsigned()
         if (s > Short.MAX_VALUE) {
             s -= 65536
@@ -109,35 +109,35 @@ public open class InputBuffer(data: ByteArray) : Buffer(data) {
         return s.toShort()
     }
 
-    public fun readUnsignedShort(): Int {
+    fun readUnsignedShort(): Int {
         return readShort().toInt() and 0xFFFF
     }
 
-    public fun readInt(): Int {
+    fun readInt(): Int {
         return if (isLsb())
             readUnsigned() + (readUnsigned() shl 8) + (readUnsigned() shl 16) + (readUnsigned() shl 24)
         else
             (readUnsigned() shl 24) + (readUnsigned() shl 16) + (readUnsigned() shl 8) + readUnsigned()
     }
 
-    public fun readUnsignedInt(): Long {
+    fun readUnsignedInt(): Long {
         return readInt().toLong() and 0xFFFFFFFFL
     }
 
-    public fun readLong(): Long {
+    fun readLong(): Long {
         val v = readUnsignedInt()
         val k = readUnsignedInt()
         return (v shl 32) + k
     }
 
-    public fun read24BitInt(): Int {
+    fun read24BitInt(): Int {
         return if (isLsb())
             readUnsigned() + (readUnsigned() shl 8) + (readUnsigned() shl 16)
         else
             (readUnsigned() shl 16) + (readUnsigned() shl 8) + readUnsigned()
     }
 
-    public fun readSmart(): Int {
+    fun readSmart(): Int {
         val i = data[offset].toInt() and 0xFF
         if (i < 128) {
             return readUnsigned() - 64
@@ -145,7 +145,7 @@ public open class InputBuffer(data: ByteArray) : Buffer(data) {
         return readUnsignedShort() - 49152
     }
 
-    public fun readUnsignedSmart(): Int {
+    fun readUnsignedSmart(): Int {
         val i = data[offset].toInt() and 0xFF
         if (i < 128) {
             return readUnsigned()
@@ -153,7 +153,7 @@ public open class InputBuffer(data: ByteArray) : Buffer(data) {
         return readUnsignedShort() - 32768
     }
 
-    public fun readSmart2(): Int {
+    fun readSmart2(): Int {
         var i = 0
         var v = readUnsignedSmart()
         while (v == Short.MAX_VALUE.toInt()) {
@@ -164,7 +164,7 @@ public open class InputBuffer(data: ByteArray) : Buffer(data) {
         return i
     }
 
-    public fun readBigSmart(): Int {
+    fun readBigSmart(): Int {
         if (data[offset] < 0) {
             return readInt() and 0x7FFFFFFF
         }
@@ -175,7 +175,7 @@ public open class InputBuffer(data: ByteArray) : Buffer(data) {
         return value
     }
 
-    public fun readString(): String {
+    fun readString(): String {
         val currentOffset = offset
         while (read().toInt() != 0) {
             /* empty */
@@ -187,15 +187,17 @@ public open class InputBuffer(data: ByteArray) : Buffer(data) {
         return replaceSpecialCharacters(data, currentOffset, length)
     }
 
-    public fun readStringRaw(): String {
+    fun readStringRaw(): String {
         val start = offset
         while (data[offset++].toInt() != 10) {
-
+            /*
+             * Empty
+             */
         }
         return String(data, start, offset - start - 1)
     }
 
-    public fun readBit(position: Int): Int {
+    fun readBit(position: Int): Int {
         check(hasBitAccess()) { "No bit access." }
         var i = position
         var byteOffset = bitPosition shr 3
@@ -213,6 +215,39 @@ public open class InputBuffer(data: ByteArray) : Buffer(data) {
             data[byteOffset].toInt() shr bitMaskIndex - i and BIT_MASK[i]
         }
         return value
+    }
+
+    fun decodeXTEA(keys: IntArray, start: Int, end: Int) {
+        val l = offset
+        offset = start
+        val i1 = (end - start) / 8
+        for (j1 in 0 until i1) {
+            var k1: Int = readInt()
+            var l1: Int = readInt()
+            var sum = -0x3910c8e0
+            val delta = -0x61c88647
+            var k2 = 32
+            while (k2-- > 0) {
+                l1 -= keys[sum and 0x1c84 ushr 11] + sum xor (k1 ushr 5 xor k1 shl 4) + k1
+                sum -= delta
+                k1 -= (l1 ushr 5 xor l1 shl 4) + l1 xor keys[sum and 3] + sum
+            }
+            val outputBuffer = toOutputBuffer()
+            outputBuffer.jump(-8)
+            outputBuffer.writeInt(k1).writeInt(l1)
+            data = outputBuffer.raw()
+        }
+        offset = l
+    }
+
+    @JvmOverloads
+    fun toOutputBuffer(copyOffset: Boolean = true): OutputBuffer {
+        val outputBuffer = OutputBuffer(0)
+        outputBuffer.write(data.clone())
+        if (copyOffset) {
+            outputBuffer.offset = offset
+        }
+        return outputBuffer
     }
 
     companion object {

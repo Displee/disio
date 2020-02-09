@@ -2,23 +2,33 @@ package com.displee.io.impl
 
 import com.displee.io.Buffer
 
-public open class OutputBuffer(capacity: Int) : Buffer(capacity) {
+open class OutputBuffer(capacity: Int) : Buffer(capacity) {
 
-    public fun write(value: Int): OutputBuffer {
+    private fun ensureCapacity(size: Int) {
+        val newOffset = offset + size
+        if (newOffset < data.size) {
+            return
+        }
+        val newData = ByteArray(newOffset)
+        System.arraycopy(data, 0, newData, 0, data.size)
+        data = newData
+    }
+
+    fun write(value: Int): OutputBuffer {
         return write(value.toByte())
     }
 
-    public fun write(value: Byte): OutputBuffer {
+    fun write(value: Byte): OutputBuffer {
         ensureCapacity(1)
         data[offset++] = value
         return this
     }
 
-    public fun write(bytes: ByteArray): OutputBuffer {
+    fun write(bytes: ByteArray): OutputBuffer {
         return write(bytes, 0, bytes.size)
     }
 
-    public fun write(bytes: ByteArray, offset: Int, size: Int): OutputBuffer {
+    fun write(bytes: ByteArray, offset: Int, size: Int): OutputBuffer {
         ensureCapacity(size)
         for (i in offset until size) {
             write(bytes[i])
@@ -26,11 +36,11 @@ public open class OutputBuffer(capacity: Int) : Buffer(capacity) {
         return this
     }
 
-    public fun write(values: ShortArray): OutputBuffer {
+    fun write(values: ShortArray): OutputBuffer {
         return write(values, 0, values.size)
     }
 
-    public fun write(values: ShortArray, offset: Int, size: Int): OutputBuffer {
+    fun write(values: ShortArray, offset: Int, size: Int): OutputBuffer {
         ensureCapacity(size * 2)
         for (i in offset until size) {
             writeShort(values[i])
@@ -38,11 +48,11 @@ public open class OutputBuffer(capacity: Int) : Buffer(capacity) {
         return this
     }
 
-    public fun write(values: IntArray): OutputBuffer {
+    fun write(values: IntArray): OutputBuffer {
         return write(values, 0, values.size)
     }
 
-    public fun write(values: IntArray, offset: Int, size: Int): OutputBuffer {
+    fun write(values: IntArray, offset: Int, size: Int): OutputBuffer {
         ensureCapacity(size * 4)
         for (i in offset until size) {
             writeInt(values[i])
@@ -50,11 +60,11 @@ public open class OutputBuffer(capacity: Int) : Buffer(capacity) {
         return this
     }
 
-    public fun write(values: LongArray): OutputBuffer {
+    fun write(values: LongArray): OutputBuffer {
         return write(values, 0, values.size)
     }
 
-    public fun write(values: LongArray, offset: Int, size: Int): OutputBuffer {
+    fun write(values: LongArray, offset: Int, size: Int): OutputBuffer {
         ensureCapacity(size * 8)
         for (i in offset until size) {
             writeLong(values[i])
@@ -62,11 +72,11 @@ public open class OutputBuffer(capacity: Int) : Buffer(capacity) {
         return this
     }
 
-    public fun writeBoolean(value: Boolean): OutputBuffer {
+    fun writeBoolean(value: Boolean): OutputBuffer {
         return write(if (value) 1 else 0)
     }
 
-    public fun writeShort(value: Short): OutputBuffer {
+    fun writeShort(value: Short): OutputBuffer {
         ensureCapacity(2)
         return if (isMsb()) writeShortMsb(value) else writeShortLsb(value)
     }
@@ -81,7 +91,7 @@ public open class OutputBuffer(capacity: Int) : Buffer(capacity) {
             .write(value.toInt() shr 8)
     }
 
-    public fun writeInt(value: Int): OutputBuffer {
+    fun writeInt(value: Int): OutputBuffer {
         ensureCapacity(4)
         return if (isMsb()) writeIntMsb(value) else writeIntLsb(value)
     }
@@ -100,7 +110,7 @@ public open class OutputBuffer(capacity: Int) : Buffer(capacity) {
             .write(value shr 24)
     }
 
-    public fun writeLong(value: Long): OutputBuffer {
+    fun writeLong(value: Long): OutputBuffer {
         ensureCapacity(8)
         return if (isMsb()) writeLongMsb(value) else writeLongLsb(value)
     }
@@ -127,7 +137,7 @@ public open class OutputBuffer(capacity: Int) : Buffer(capacity) {
             .write((value shr 56).toInt())
     }
 
-    public fun write24BitInt(value: Int): OutputBuffer {
+    fun write24BitInt(value: Int): OutputBuffer {
         ensureCapacity(3)
         return if (isMsb()) write24BitIntMsb(value) else write24BitIntLsb(value)
     }
@@ -144,21 +154,21 @@ public open class OutputBuffer(capacity: Int) : Buffer(capacity) {
             .write(value shr 16)
     }
 
-    public fun writeSmart(value: Int): OutputBuffer {
+    fun writeSmart(value: Int): OutputBuffer {
         if (value < 64 && value >= -64) {
             return write(value + 64)
         }
         return writeShort((value + 49152).toShort())
     }
 
-    public fun writeUnsignedSmart(value: Int): OutputBuffer {
+    fun writeUnsignedSmart(value: Int): OutputBuffer {
         if (value < 128) {
             return write(value.toByte())
         }
         return writeShort((value + 32768).toShort())
     }
 
-    public fun writeSmart2(i: Int): OutputBuffer {
+    fun writeSmart2(i: Int): OutputBuffer {
         var value = i
         while (value >= Short.MAX_VALUE) {
             writeUnsignedSmart(Short.MAX_VALUE.toInt())
@@ -167,14 +177,14 @@ public open class OutputBuffer(capacity: Int) : Buffer(capacity) {
         return writeUnsignedSmart(value)
     }
 
-    public fun writeBigSmart(value: Int): OutputBuffer {
+    fun writeBigSmart(value: Int): OutputBuffer {
         if (value >= Short.MAX_VALUE) {
             return writeInt(value - Integer.MAX_VALUE - 1)
         }
         return writeShort(if (value >= 0) value.toShort() else Short.MAX_VALUE)
     }
 
-    public fun writeString(value: String): OutputBuffer {
+    fun writeString(value: String): OutputBuffer {
         val length = value.length
         ensureCapacity(length + 1)
         for (i in 0 until length) {
@@ -193,7 +203,7 @@ public open class OutputBuffer(capacity: Int) : Buffer(capacity) {
         return write(string.toByteArray()).write(10)
     }
 
-    public fun writeBit(bit: Int, value: Int): OutputBuffer {
+    fun writeBit(bit: Int, value: Int): OutputBuffer {
         check(hasBitAccess()) { "No bit access." }
         var numBits = bit
         var bytePos = bitPosition shr 3
@@ -217,14 +227,37 @@ public open class OutputBuffer(capacity: Int) : Buffer(capacity) {
         return this
     }
 
-    private fun ensureCapacity(size: Int) {
-        val newOffset = offset + size;
-        if (newOffset < data.size) {
-            return
+    fun encodeXTEA(keys: IntArray, start: Int, end: Int) {
+        val o = offset
+        val j = (end - start) / 8
+        offset = start
+        for (k in 0 until j) {
+            val inputBuffer = toInputBuffer()
+            var l: Int = inputBuffer.readInt()
+            var i1: Int = inputBuffer.readInt()
+            offset = inputBuffer.offset
+            var sum = 0
+            val delta = -0x61c88647
+            var l1 = 32
+            while (l1-- > 0) {
+                l += sum + keys[3 and sum] xor i1 + (i1 ushr 5 xor i1 shl 4)
+                sum += delta
+                i1 += l + (l ushr 5 xor l shl 4) xor keys[0x1eec and sum ushr 11] + sum
+            }
+            offset -= 8
+            writeInt(l)
+            writeInt(i1)
         }
-        val newData = ByteArray(newOffset)
-        System.arraycopy(data, 0, newData, 0, data.size)
-        data = newData
+        offset = o
+    }
+
+    @JvmOverloads
+    fun toInputBuffer(copyOffset: Boolean = true): InputBuffer {
+        val inputBuffer = InputBuffer(data.clone())
+        if (copyOffset) {
+            inputBuffer.offset = offset
+        }
+        return inputBuffer
     }
 
     companion object {
