@@ -77,18 +77,22 @@ open class OutputBuffer(capacity: Int) : Buffer(capacity) {
     }
 
     fun writeShort(value: Short): OutputBuffer {
+        return writeShort(value.toInt())
+    }
+
+    fun writeShort(value: Int): OutputBuffer {
         ensureCapacity(2)
         return if (isMsb()) writeShortMsb(value) else writeShortLsb(value)
     }
 
-    private fun writeShortMsb(value: Short): OutputBuffer {
-        return write(value.toInt() shr 8)
-            .write(value.toInt())
+    private fun writeShortMsb(value: Int): OutputBuffer {
+        return write(value shr 8)
+            .write(value)
     }
 
-    private fun writeShortLsb(value: Short): OutputBuffer {
-        return write(value.toInt())
-            .write(value.toInt() shr 8)
+    private fun writeShortLsb(value: Int): OutputBuffer {
+        return write(value)
+            .write(value shr 8)
     }
 
     fun writeInt(value: Int): OutputBuffer {
@@ -108,6 +112,11 @@ open class OutputBuffer(capacity: Int) : Buffer(capacity) {
             .write(value shr 8)
             .write(value shr 16)
             .write(value shr 24)
+    }
+
+    private fun writeIntReversed(value: Int): OutputBuffer {
+        ensureCapacity(4)
+        return if (isMsb()) writeIntLsb(value) else writeIntMsb(value)
     }
 
     fun writeLong(value: Long): OutputBuffer {
@@ -201,6 +210,14 @@ open class OutputBuffer(capacity: Int) : Buffer(capacity) {
 
     fun writeStringRaw(string: String): OutputBuffer {
         return write(string.toByteArray()).write(10)
+    }
+
+    fun writeFloat(float: Float): OutputBuffer {
+        return writeInt(java.lang.Float.floatToRawIntBits(float))
+    }
+
+    fun writeFloatReversed(float: Float): OutputBuffer {
+        return writeIntReversed(java.lang.Float.floatToRawIntBits(float))
     }
 
     fun writeBit(bit: Int, value: Int): OutputBuffer {

@@ -19,6 +19,10 @@ open class InputBuffer(data: ByteArray) : Buffer(data) {
         return data
     }
 
+    fun read(data: ByteArray) {
+        read(data, 0, data.size)
+    }
+
     fun read(data: ByteArray, offset: Int, length: Int) {
         for (i in offset until length + offset) {
             data[i] = read()
@@ -29,6 +33,10 @@ open class InputBuffer(data: ByteArray) : Buffer(data) {
         val data = IntArray(length)
         readUnsigned(data, 0, data.size)
         return data
+    }
+
+    fun readUnsigned(data: IntArray) {
+        readUnsigned(data, 0, data.size)
     }
 
     fun readUnsigned(data: IntArray, offset: Int, length: Int) {
@@ -43,6 +51,10 @@ open class InputBuffer(data: ByteArray) : Buffer(data) {
         return data
     }
 
+    fun readShort(data: ShortArray) {
+        readShort(data, 0, data.size)
+    }
+
     fun readShort(data: ShortArray, offset: Int, length: Int) {
         for (i in offset until length + offset) {
             data[i] = readShort()
@@ -53,6 +65,10 @@ open class InputBuffer(data: ByteArray) : Buffer(data) {
         val data = IntArray(length)
         readUnsignedShort(data, 0, data.size)
         return data
+    }
+
+    fun readUnsignedShort(data: IntArray) {
+        readUnsignedShort(data, 0, data.size)
     }
 
     fun readUnsignedShort(data: IntArray, offset: Int, length: Int) {
@@ -67,6 +83,10 @@ open class InputBuffer(data: ByteArray) : Buffer(data) {
         return data
     }
 
+    fun readInt(data: IntArray) {
+        readInt(data, 0, data.size)
+    }
+
     fun readInt(data: IntArray, offset: Int, length: Int) {
         for (i in offset until length + offset) {
             data[i] = readInt()
@@ -79,6 +99,10 @@ open class InputBuffer(data: ByteArray) : Buffer(data) {
         return data
     }
 
+    fun readUnsignedInt(data: LongArray) {
+        readUnsignedInt(data, 0, data.size)
+    }
+
     fun readUnsignedInt(data: LongArray, offset: Int, length: Int) {
         for (i in offset until length + offset) {
             data[i] = readUnsignedInt()
@@ -89,6 +113,10 @@ open class InputBuffer(data: ByteArray) : Buffer(data) {
         val data = LongArray(length)
         readLong(data, 0, data.size)
         return data
+    }
+
+    fun readLong(data: LongArray) {
+        readLong(data, 0, data.size)
     }
 
     fun readLong(data: LongArray, offset: Int, length: Int) {
@@ -113,11 +141,20 @@ open class InputBuffer(data: ByteArray) : Buffer(data) {
         return readShort().toInt() and 0xFFFF
     }
 
+    private fun readIntLsb(): Int {
+        return readUnsigned() + (readUnsigned() shl 8) + (readUnsigned() shl 16) + (readUnsigned() shl 24)
+    }
+
+    private fun readIntMsb(): Int {
+        return (readUnsigned() shl 24) + (readUnsigned() shl 16) + (readUnsigned() shl 8) + readUnsigned()
+    }
+
     fun readInt(): Int {
-        return if (isLsb())
-            readUnsigned() + (readUnsigned() shl 8) + (readUnsigned() shl 16) + (readUnsigned() shl 24)
-        else
-            (readUnsigned() shl 24) + (readUnsigned() shl 16) + (readUnsigned() shl 8) + readUnsigned()
+        return if (isLsb()) readIntLsb() else readIntMsb()
+    }
+
+    fun readIntReversed(): Int {
+        return if (isLsb()) readIntMsb() else readIntLsb()
     }
 
     fun readUnsignedInt(): Long {
@@ -195,6 +232,14 @@ open class InputBuffer(data: ByteArray) : Buffer(data) {
              */
         }
         return String(data, start, offset - start - 1)
+    }
+
+    fun readIntAsFloat(): Float {
+        return java.lang.Float.intBitsToFloat(readInt())
+    }
+
+    fun readIntAsFloatReversed(): Float {
+        return java.lang.Float.intBitsToFloat(readIntReversed())
     }
 
     fun readBit(position: Int): Int {
