@@ -262,7 +262,7 @@ open class InputBuffer(data: ByteArray) : Buffer(data) {
         return value
     }
 
-    fun decodeXTEA(keys: IntArray, start: Int, end: Int) {
+    fun decryptXTEA(keys: IntArray, start: Int, end: Int) {
         val l = offset
         offset = start
         val i1 = (end - start) / 8

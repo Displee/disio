@@ -10,6 +10,7 @@ Features:
 * Bit operations
 * LSB (least significant bit) and MSB (most significant bit) support
 * XTEA encryption and decryption
+* RSA cryption
 
 ## Gradle
 ```

@@ -244,7 +244,7 @@ open class OutputBuffer(capacity: Int) : Buffer(capacity) {
         return this
     }
 
-    fun encodeXTEA(keys: IntArray, start: Int, end: Int) {
+    fun encryptXTEA(keys: IntArray, start: Int, end: Int) {
         val o = offset
         val j = (end - start) / 8
         offset = start

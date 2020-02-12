@@ -1,7 +1,6 @@
 package com.displee.io
 
-import com.displee.io.impl.InputBuffer
-import com.displee.io.impl.OutputBuffer
+import java.math.BigInteger
 
 abstract class Buffer {
 
@@ -23,6 +22,22 @@ abstract class Buffer {
         this.data = data
     }
 
+    fun get(offset: Int): Byte {
+        return data[offset]
+    }
+
+    fun get(data: ByteArray, offset: Int, length: Int) {
+        for (i in offset until length + offset) {
+            data[i] = get(i)
+        }
+    }
+
+    fun get(offset: Int, length: Int): ByteArray {
+        val data = ByteArray(length)
+        get(data, offset, data.size)
+        return data
+    }
+
     /**
      * Switch to 'most significant bit' mode.
      */
@@ -37,29 +52,25 @@ abstract class Buffer {
         msb = false
     }
 
-    /**
-     * Start bit access.
-     */
     fun startBitAccess() {
         check(offset > 0) { "Offset has to be at least 1! "}
         bitPosition = offset * BYTE_SIZE
     }
 
-    fun getBitPosition(i: Int): Int {
+    fun bitPosition(i: Int): Int {
         return BYTE_SIZE * i - bitPosition
     }
 
-    /**
-     * Finish the bit access.
-     */
     fun finishBitAccess() {
         offset = (bitPosition + (BYTE_SIZE - 1)) / BYTE_SIZE
         bitPosition = 0
     }
 
-    /**
-     * Check if we've bit access.
-     */
+    @JvmOverloads
+    fun cryptRSA(exponent: BigInteger, modulus: BigInteger, startOffset: Int = 0, length: Int = offset): ByteArray {
+        return cryptRSA(get(startOffset, length + startOffset), exponent, modulus)
+    }
+
     fun hasBitAccess(): Boolean {
         return bitPosition != 0
     }
@@ -71,49 +82,28 @@ abstract class Buffer {
         this.offset += offset
     }
 
-    /**
-     * Check if we're in MSB mode.
-     */
     fun isMsb(): Boolean {
         return msb
     }
 
-    /**
-     * Check if we're in LSB mode.
-     */
     fun isLsb(): Boolean {
         return !msb
     }
 
-    /**
-     * Check if there are any bytes remaining to be read or write.
-     */
     fun hasRemaining(): Boolean {
         return remaining() > 0
     }
 
-    /**
-     * Get the remaining bytes.
-     * @return Int The remaining bytes.
-     */
     fun remaining(): Int {
         return data.size - offset
     }
 
-    /**
-     * Get the data until the {@code offset}.
-     * @return ByteArray The data.
-     */
     fun array(): ByteArray {
         val array = ByteArray(offset)
         System.arraycopy(data, 0, array, 0, offset)
         return array
     }
 
-    /**
-     * Get the raw data that's being used to read from or write to.
-     * @return ByteArray {@code data}
-     */
     fun raw(): ByteArray {
         return data
     }
@@ -126,6 +116,11 @@ abstract class Buffer {
         const val BYTE_SIZE = 8
         val BIT_MASK = IntArray(32) { i ->
             (1 shl i) - 1
+        }
+
+        @JvmStatic
+        fun cryptRSA(data: ByteArray, exponent: BigInteger, modulus: BigInteger): ByteArray {
+            return BigInteger(data).modPow(exponent, modulus).toByteArray()
         }
 
     }
