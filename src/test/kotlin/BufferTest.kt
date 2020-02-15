@@ -13,10 +13,10 @@ class BufferTest {
         val value = 12.toByte()
 
         val outputBuffer = OutputBuffer(1)
-        outputBuffer.write(value)
+        outputBuffer.writeByte(value)
 
         val inputBuffer = InputBuffer(outputBuffer.array())
-        assert(inputBuffer.read() == value)
+        assert(inputBuffer.readByte() == value)
     }
 
     @Test
@@ -24,10 +24,10 @@ class BufferTest {
         val value = (-120).toByte()
 
         val outputBuffer = OutputBuffer(1)
-        outputBuffer.write(value)
+        outputBuffer.writeByte(value)
 
         val inputBuffer = InputBuffer(outputBuffer.array())
-        assert(inputBuffer.read() == value)
+        assert(inputBuffer.readByte() == value)
     }
 
     @Test
@@ -36,21 +36,21 @@ class BufferTest {
         val unsigned = value.toInt() and 0xFF
 
         val outputBuffer = OutputBuffer(1)
-        outputBuffer.write(value)
+        outputBuffer.writeByte(value)
 
         val inputBuffer = InputBuffer(outputBuffer.array())
-        assert(inputBuffer.readUnsigned() == unsigned)
+        assert(inputBuffer.readUnsignedByte() == unsigned)
     }
 
     @Test
     fun testShort() {
-        val value = 65532.toShort()
+        val value = 65532
 
         val outputBuffer = OutputBuffer(2)
         outputBuffer.writeShort(value)
 
         val inputBuffer = InputBuffer(outputBuffer.array())
-        assert(inputBuffer.readShort() == value)
+        assert(inputBuffer.readUnsignedShort() == value)
     }
 
     @Test
@@ -70,10 +70,10 @@ class BufferTest {
         val size = data.size
 
         val outputBuffer = OutputBuffer(size)
-        outputBuffer.write(data)
+        outputBuffer.writeBytes(data)
 
         val inputBuffer = InputBuffer(outputBuffer.array())
-        assert(inputBuffer.read(size).contentEquals(data))
+        assert(inputBuffer.readBytes(size).contentEquals(data))
     }
 
     @Test
@@ -95,14 +95,14 @@ class BufferTest {
         val int = 1337
 
         val outputBuffer = OutputBuffer(10)
-        outputBuffer.write(byte)
+        outputBuffer.writeByte(byte)
         outputBuffer.startBitAccess()
         outputBuffer.writeBit(bitId, bitValue)
         outputBuffer.finishBitAccess()
         outputBuffer.writeInt(int)
 
         val inputBuffer = InputBuffer(outputBuffer.array())
-        assert(inputBuffer.readUnsigned() == byte)
+        assert(inputBuffer.readUnsignedByte() == byte)
         inputBuffer.startBitAccess()
         val bit = inputBuffer.readBit(bitId)
         assert(bit == bitValue)
@@ -118,20 +118,20 @@ class BufferTest {
         val data = byteArrayOf(1, 3, 3, 4, 5, 6, 7, 8, 7, 6, 5)
         val keys = intArrayOf(9, 5, 6, 4)
         val outputBuffer = OutputBuffer(0)
-        outputBuffer.write(value1)
+        outputBuffer.writeByte(value1)
         outputBuffer.writeInt(value2)
         val startOffset = outputBuffer.offset
-        outputBuffer.write(data)
+        outputBuffer.writeBytes(data)
         outputBuffer.encryptXTEA(keys, startOffset, outputBuffer.offset)
-        outputBuffer.write(value3)
+        outputBuffer.writeByte(value3)
 
         val inputBuffer = outputBuffer.toInputBuffer(false)
-        assert(inputBuffer.read().toInt() == value1)
+        assert(inputBuffer.readByte().toInt() == value1)
         assert(inputBuffer.readInt() == value2)
         inputBuffer.decryptXTEA(keys, startOffset, inputBuffer.raw().size)
-        val decryptedData = inputBuffer.read(data.size)
+        val decryptedData = inputBuffer.readBytes(data.size)
         assert(decryptedData.contentEquals(data))
-        assert(inputBuffer.read().toInt() == value3)
+        assert(inputBuffer.readByte().toInt() == value3)
     }
 
     @Test
