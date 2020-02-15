@@ -44,13 +44,17 @@ class BufferTest {
 
     @Test
     fun testShort() {
-        val value = 65532
+        var value = 65532
 
         val outputBuffer = OutputBuffer(2)
         outputBuffer.writeShort(value)
 
         val inputBuffer = InputBuffer(outputBuffer.array())
         assert(inputBuffer.readUnsignedShort() == value)
+
+        inputBuffer.offset = 0
+        value = 65532.toShort().toInt()
+        assert(inputBuffer.readShort() == value)
     }
 
     @Test
@@ -62,6 +66,17 @@ class BufferTest {
 
         val inputBuffer = InputBuffer(outputBuffer.array())
         assert(inputBuffer.readInt() == value)
+    }
+
+    @Test
+    fun testLong() {
+        val value = 29329032L
+
+        val output = OutputBuffer(8)
+        output.writeLong(value)
+
+        val input = output.toInputBuffer(false)
+        assert(input.readLong() == value)
     }
 
     @Test
@@ -140,13 +155,13 @@ class BufferTest {
         val privateModulus = BigInteger("119555331260995530494627322191654816613155476612603817103079689925995402263457895890829148093414135342420807287820032417458428763496565605970163936696811485500553506743979521465489801746973392901885588777462023165252483988431877411021816445058706597607453280166045122971960003629860919338852061972113876035333")
         val publicExponent = BigInteger("10001", 16)
         val publicModulus = BigInteger("119555331260995530494627322191654816613155476612603817103079689925995402263457895890829148093414135342420807287820032417458428763496565605970163936696811485500553506743979521465489801746973392901885588777462023165252483988431877411021816445058706597607453280166045122971960003629860919338852061972113876035333")
-        val randomData = byteArrayOf(0, 1, 3, 5, 7, 7, 8, 8, 2, 1)
+        val randomData = byteArrayOf(1, 4, 0, 5, 7, 7, 8, 8, 2, 1) //seems that if we start the array with a 0, it doesn't encrypt this first byte
 
         val encryptedData = Buffer.cryptRSA(randomData, privateExponent, privateModulus)
         assert(!encryptedData.contentEquals(randomData))
 
         val decryptedData = Buffer.cryptRSA(encryptedData, publicExponent, publicModulus)
-        println(decryptedData.contentEquals(randomData))
+        assert(decryptedData.contentEquals(randomData))
     }
 
     private fun generateRandomData(): ByteArray {
