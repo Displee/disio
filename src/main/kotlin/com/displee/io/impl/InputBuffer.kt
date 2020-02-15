@@ -147,19 +147,19 @@ open class InputBuffer(data: ByteArray) : Buffer(data) {
         return -readUnsignedByte()
     }
 
-    fun readBytePlus128(): Byte {
+    fun readByte128(): Byte {
         return (readByte() - 128).toByte()
     }
 
-    fun readUnsignedBytePlus128(): Int {
+    fun readUnsignedByte128(): Int {
         return (readByte() - 128) and 0xFF
     }
 
-    fun readByteMin128(): Byte {
+    fun readNegativeByte128(): Byte {
         return (128 - readByte()).toByte()
     }
 
-    fun readUnsignedByteMin128(): Int {
+    fun readUnsignedNegativeByte128(): Int {
         return (128 - readByte()) and 0xFF
     }
 

@@ -96,11 +96,19 @@ open class OutputBuffer(capacity: Int) : Buffer(capacity) {
         return writeByte(-value)
     }
 
-    fun writeBytePlus128(value: Int): OutputBuffer {
+    fun writeByte128(value: Byte): OutputBuffer {
+        return writeByte128(value.toInt())
+    }
+
+    fun writeByte128(value: Int): OutputBuffer {
         return writeByte(128 + value)
     }
 
-    fun writeByteMin128(value: Int): OutputBuffer {
+    fun writeNegativeByte128(value: Byte): OutputBuffer {
+        return writeNegativeByte128(value.toInt())
+    }
+
+    fun writeNegativeByte128(value: Int): OutputBuffer {
         return writeByte(128 - value)
     }
 

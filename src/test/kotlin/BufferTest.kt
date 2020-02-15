@@ -58,6 +58,26 @@ class BufferTest {
     }
 
     @Test
+    fun testBytePlus128() {
+        val value = 110.toByte()
+        val output = OutputBuffer(1)
+        output.writeByte128(value)
+
+        val input = output.toInputBuffer(false)
+        assert(input.readByte128() == value)
+    }
+
+    @Test
+    fun testByteMin128() {
+        val value = 110.toByte()
+        val output = OutputBuffer(1)
+        output.writeNegativeByte128(value)
+
+        val input = output.toInputBuffer(false)
+        assert(input.readNegativeByte128() == value)
+    }
+
+    @Test
     fun testInt() {
         val value = 8439843
 
