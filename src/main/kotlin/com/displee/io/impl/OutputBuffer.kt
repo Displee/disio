@@ -6,11 +6,11 @@ open class OutputBuffer(capacity: Int) : Buffer(capacity) {
 
     private fun ensureCapacity(size: Int) {
         val newOffset = offset + size
-        if (newOffset < data.size) {
+        if (newOffset <= data.size) {
             return
         }
         val newData = ByteArray(newOffset)
-        System.arraycopy(data, 0, newData, 0, data.size)
+        get(newData, 0, data.size)
         data = newData
     }
 

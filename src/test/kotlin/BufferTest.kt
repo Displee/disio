@@ -152,7 +152,7 @@ class BufferTest {
         val value3 = 99
         val data = byteArrayOf(1, 3, 3, 4, 5, 6, 7, 8, 7, 6, 5)
         val keys = intArrayOf(9, 5, 6, 4)
-        val outputBuffer = OutputBuffer(0)
+        val outputBuffer = OutputBuffer(5 + data.size + 1)
         outputBuffer.writeByte(value1)
         outputBuffer.writeInt(value2)
         val startOffset = outputBuffer.offset

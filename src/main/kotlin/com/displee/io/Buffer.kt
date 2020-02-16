@@ -27,9 +27,7 @@ abstract class Buffer {
     }
 
     fun get(data: ByteArray, offset: Int, length: Int) {
-        for (i in offset until length + offset) {
-            data[i] = get(i)
-        }
+        System.arraycopy(this.data, offset, data, offset, length + offset)
     }
 
     fun get(offset: Int, length: Int): ByteArray {
@@ -75,13 +73,6 @@ abstract class Buffer {
         return bitPosition != 0
     }
 
-    /**
-     * Increase the offset with the specified {@code offset}.
-     */
-    fun jump(offset: Int) {
-        this.offset += offset
-    }
-
     fun isMsb(): Boolean {
         return msb
     }
@@ -98,9 +89,10 @@ abstract class Buffer {
         return data.size - offset
     }
 
-    fun array(): ByteArray {
-        val array = ByteArray(offset)
-        System.arraycopy(data, 0, array, 0, offset)
+    @JvmOverloads
+    fun array(start: Int = 0, length: Int = offset): ByteArray {
+        val array = ByteArray(length)
+        get(array, start, length)
         return array
     }
 
