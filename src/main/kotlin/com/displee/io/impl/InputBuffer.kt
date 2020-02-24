@@ -2,158 +2,299 @@ package com.displee.io.impl
 
 import com.displee.io.Buffer
 
-public open class InputBuffer(data: ByteArray) : Buffer(data) {
+open class InputBuffer(data: ByteArray) : Buffer(data) {
 
-    public fun read(): Byte {
-        check(offset >= data.size) { "No data left to read." }
+    fun readByte(): Byte {
+        check(offset < data.size) { "No data left to read." }
         return data[offset++]
     }
 
-    public fun readUnsigned(): Int {
-        return read().toInt() and 0xFF
+    fun readUnsignedByte(): Int {
+        return readByte().toInt() and 0xFF
     }
 
-    public fun read(length: Int): ByteArray {
+    fun readBytes(length: Int): ByteArray {
         val data = ByteArray(length)
-        read(data, 0, data.size)
+        readBytes(data, 0, data.size)
         return data
     }
 
-    public fun read(data: ByteArray, offset: Int, length: Int) {
+    fun readBytes(data: ByteArray) {
+        readBytes(data, 0, data.size)
+    }
+
+    fun readBytes(data: ByteArray, offset: Int, length: Int) {
         for (i in offset until length + offset) {
-            data[i] = read()
+            data[i] = readByte()
         }
     }
 
-    public fun readUnsigned(length: Int): IntArray {
+    fun readUnsignedBytes(length: Int): IntArray {
         val data = IntArray(length)
-        readUnsigned(data, 0, data.size)
+        readUnsignedBytes(data, 0, data.size)
         return data
     }
 
-    public fun readUnsigned(data: IntArray, offset: Int, length: Int) {
+    fun readUnsignedBytes(data: IntArray) {
+        readUnsignedBytes(data, 0, data.size)
+    }
+
+    fun readUnsignedBytes(data: IntArray, offset: Int, length: Int) {
         for (i in offset until length + offset) {
-            data[i] = readUnsigned()
+            data[i] = readUnsignedByte()
         }
     }
 
-    public fun readShort(length: Int): ShortArray {
+    fun readShorts(length: Int): ShortArray {
         val data = ShortArray(length)
-        readShort(data, 0, data.size)
+        readShorts(data, 0, data.size)
         return data
     }
 
-    public fun readShort(data: ShortArray, offset: Int, length: Int) {
+    fun readShorts(data: ShortArray) {
+        readShorts(data, 0, data.size)
+    }
+
+    fun readShorts(data: IntArray) {
+        readShorts(data, 0, data.size)
+    }
+
+    fun readShorts(data: ShortArray, offset: Int, length: Int) {
         for (i in offset until length + offset) {
-            data[i] = readShort()
+            data[i] = readShort().toShort()
         }
     }
 
-    public fun readUnsignedShort(length: Int): IntArray {
+    fun readShorts(data: IntArray, offset: Int, length: Int) {
+        for (i in offset until length + offset) {
+            data[i] = readShort().toInt()
+        }
+    }
+
+    fun readUnsignedShorts(length: Int): IntArray {
         val data = IntArray(length)
-        readUnsignedShort(data, 0, data.size)
+        readUnsignedShorts(data, 0, data.size)
         return data
     }
 
-    public fun readUnsignedShort(data: IntArray, offset: Int, length: Int) {
+    fun readUnsignedShorts(data: IntArray) {
+        readUnsignedShorts(data, 0, data.size)
+    }
+
+    fun readUnsignedShorts(data: IntArray, offset: Int, length: Int) {
         for (i in offset until length + offset) {
             data[i] = readUnsignedShort()
         }
     }
 
-    public fun readInt(length: Int): IntArray {
+    fun readInts(length: Int): IntArray {
         val data = IntArray(length)
-        readInt(data, 0, data.size)
+        readInts(data, 0, data.size)
         return data
     }
 
-    public fun readInt(data: IntArray, offset: Int, length: Int) {
+    fun readInts(data: IntArray) {
+        readInts(data, 0, data.size)
+    }
+
+    fun readInts(data: IntArray, offset: Int, length: Int) {
         for (i in offset until length + offset) {
             data[i] = readInt()
         }
     }
 
-    public fun readUnsignedInt(length: Int): LongArray {
+    fun readUnsignedInts(length: Int): LongArray {
         val data = LongArray(length)
-        readUnsignedInt(data, 0, data.size)
+        readUnsignedInts(data, 0, data.size)
         return data
     }
 
-    public fun readUnsignedInt(data: LongArray, offset: Int, length: Int) {
+    fun readUnsignedInts(data: LongArray) {
+        readUnsignedInts(data, 0, data.size)
+    }
+
+    fun readUnsignedInts(data: LongArray, offset: Int, length: Int) {
         for (i in offset until length + offset) {
             data[i] = readUnsignedInt()
         }
     }
 
-    public fun readLong(length: Int): LongArray {
+    fun readLongs(length: Int): LongArray {
         val data = LongArray(length)
-        readLong(data, 0, data.size)
+        readLongs(data, 0, data.size)
         return data
     }
 
-    public fun readLong(data: LongArray, offset: Int, length: Int) {
+    fun readLongs(data: LongArray) {
+        readLongs(data, 0, data.size)
+    }
+
+    fun readLongs(data: LongArray, offset: Int, length: Int) {
         for (i in offset until length + offset) {
             data[i] = readLong()
         }
     }
 
-    public fun readBoolean(): Boolean {
-        return read() == 1.toByte()
+    fun readBoolean(): Boolean {
+        return readByte() == 1.toByte()
     }
 
-    public fun readShort(): Short {
-        var s = if (isLsb()) readUnsigned() + (readUnsigned() shl 8) else (readUnsigned() shl 8) + readUnsigned()
+    fun readNegativeByte(): Byte {
+        return (-readByte()).toByte()
+    }
+
+    fun readUnsignedNegativeByte(): Int {
+        return -readUnsignedByte()
+    }
+
+    fun readByte128(): Byte {
+        return (readByte() - 128).toByte()
+    }
+
+    fun readUnsignedByte128(): Int {
+        return (readByte() - 128) and 0xFF
+    }
+
+    fun readNegativeByte128(): Byte {
+        return (128 - readByte()).toByte()
+    }
+
+    fun readUnsignedNegativeByte128(): Int {
+        return (128 - readByte()) and 0xFF
+    }
+
+    fun readShort(): Int {
+        var s = readUnsignedShort()
         if (s > Short.MAX_VALUE) {
             s -= 65536
         }
-        return s.toShort()
+        return s
     }
 
-    public fun readUnsignedShort(): Int {
-        return readShort().toInt() and 0xFFFF
+    private fun readUnsignedShortMsb(): Int {
+        return (readUnsignedByte() shl 8) + readUnsignedByte()
     }
 
-    public fun readInt(): Int {
+    private fun readUnsignedShortLsb(): Int {
+        return readUnsignedByte() + (readUnsignedByte() shl 8)
+    }
+
+    fun readUnsignedShort(): Int {
+        return if (isMsb()) readUnsignedShortMsb() else readUnsignedShortLsb()
+    }
+
+    fun readShortLE(): Int {
+        var s = readUnsignedShortLE()
+        if (s > Short.MAX_VALUE) {
+            s -= 65536
+        }
+        return s
+    }
+
+    fun readUnsignedShortLE(): Int {
+        return if (isMsb()) readUnsignedShortLsb() else readUnsignedShortMsb()
+    }
+
+    private fun readShort128Msb(): Int {
+        var i = (readUnsignedByte() shl 8) + (readByte() - 128 and 0xff)
+        if (i > 32767) {
+            i -= 65536
+        }
+        return i
+    }
+
+    private fun readShort128Lsb(): Int {
+        var i = (readByte() - 128 and 0xff) + (readUnsignedByte() shl 8)
+        if (i > 32767) {
+            i -= 65536
+        }
+        return i
+    }
+
+    fun readShort128(): Int {
+        return if (isMsb()) readShort128Msb() else readShort128Lsb()
+    }
+
+    fun readShortLE128(): Int {
+        return if (isMsb()) readShort128Lsb() else readShort128Msb()
+    }
+
+    fun read24BitInt(): Int {
         return if (isLsb())
-            readUnsigned() + (readUnsigned() shl 8) + (readUnsigned() shl 16) + (readUnsigned() shl 24)
+            readUnsignedByte() + (readUnsignedByte() shl 8) + (readUnsignedByte() shl 16)
         else
-            (readUnsigned() shl 24) + (readUnsigned() shl 16) + (readUnsigned() shl 8) + readUnsigned()
+            (readUnsignedByte() shl 16) + (readUnsignedByte() shl 8) + readUnsignedByte()
     }
 
-    public fun readUnsignedInt(): Long {
+    private fun readIntMsb(): Int {
+        return (readUnsignedByte() shl 24) + (readUnsignedByte() shl 16) + (readUnsignedByte() shl 8) + readUnsignedByte()
+    }
+
+    private fun readIntLsb(): Int {
+        return readUnsignedByte() + (readUnsignedByte() shl 8) + (readUnsignedByte() shl 16) + (readUnsignedByte() shl 24)
+    }
+
+    fun readInt(): Int {
+        return if (isMsb()) readIntMsb() else readIntLsb()
+    }
+
+    fun readIntLE(): Int {
+        return if (isMsb()) readIntLsb() else readIntMsb()
+    }
+
+    private fun readIntV1Msb(): Int {
+        return (readUnsignedByte() shl 8) + readUnsignedByte() + (readUnsignedByte() shl 24) + (readUnsignedByte() shl 16)
+    }
+
+    private fun readIntV1Lsb(): Int {
+        return (readUnsignedByte() shl 16) + (readUnsignedByte() shl 24) + readUnsignedByte() + (readUnsignedByte() shl 8)
+    }
+
+    fun readIntV1(): Int {
+        return if (isMsb()) readIntV1Msb() else readIntV1Lsb()
+    }
+
+    fun readIntV2(): Int {
+        return if (isMsb()) readIntV1Lsb() else readIntV1Msb()
+    }
+
+    fun readUnsignedInt(): Long {
         return readInt().toLong() and 0xFFFFFFFFL
     }
 
-    public fun readLong(): Long {
+    fun readUnsignedIntLE(): Long {
+        return readIntLE().toLong() and 0xFFFFFFFFL
+    }
+
+    fun readLong(): Long {
         val v = readUnsignedInt()
         val k = readUnsignedInt()
         return (v shl 32) + k
     }
 
-    public fun read24BitInt(): Int {
-        return if (isLsb())
-            readUnsigned() + (readUnsigned() shl 8) + (readUnsigned() shl 16)
-        else
-            (readUnsigned() shl 16) + (readUnsigned() shl 8) + readUnsigned()
+    fun readLongLE(): Long {
+        val v = readUnsignedIntLE()
+        val k = readUnsignedIntLE()
+        return (v shl 32) + k
     }
 
-    public fun readSmart(): Int {
+    fun readSmart(): Int {
         val i = data[offset].toInt() and 0xFF
         if (i < 128) {
-            return readUnsigned() - 64
+            return readUnsignedByte() - 64
         }
         return readUnsignedShort() - 49152
     }
 
-    public fun readUnsignedSmart(): Int {
+    fun readUnsignedSmart(): Int {
         val i = data[offset].toInt() and 0xFF
         if (i < 128) {
-            return readUnsigned()
+            return readUnsignedByte()
         }
         return readUnsignedShort() - 32768
     }
 
-    public fun readSmart2(): Int {
+    fun readSmart2(): Int {
         var i = 0
         var v = readUnsignedSmart()
         while (v == Short.MAX_VALUE.toInt()) {
@@ -164,7 +305,7 @@ public open class InputBuffer(data: ByteArray) : Buffer(data) {
         return i
     }
 
-    public fun readBigSmart(): Int {
+    fun readBigSmart(): Int {
         if (data[offset] < 0) {
             return readInt() and 0x7FFFFFFF
         }
@@ -175,9 +316,9 @@ public open class InputBuffer(data: ByteArray) : Buffer(data) {
         return value
     }
 
-    public fun readString(): String {
+    fun readString(): String {
         val currentOffset = offset
-        while (read().toInt() != 0) {
+        while (readByte().toInt() != 0) {
             /* empty */
         }
         val length = offset - currentOffset - 1
@@ -187,23 +328,33 @@ public open class InputBuffer(data: ByteArray) : Buffer(data) {
         return replaceSpecialCharacters(data, currentOffset, length)
     }
 
-    public fun readStringRaw(): String {
+    fun readStringRaw(): String {
         val start = offset
         while (data[offset++].toInt() != 10) {
-
+            /*
+             * Empty
+             */
         }
         return String(data, start, offset - start - 1)
     }
 
-    public fun readBit(position: Int): Int {
-        check(!hasBitAccess()) { "No bit access." }
+    fun readIntAsFloat(): Float {
+        return java.lang.Float.intBitsToFloat(readInt())
+    }
+
+    fun readIntAsFloatLE(): Float {
+        return java.lang.Float.intBitsToFloat(readIntLE())
+    }
+
+    fun readBit(position: Int): Int {
+        check(hasBitAccess()) { "No bit access." }
         var i = position
-        var byteOffset = this.bitPosition shr 3
-        var bitMaskIndex = BYTE_SIZE - (this.bitPosition and (BYTE_SIZE - 1))
+        var byteOffset = bitPosition shr 3
+        var bitMaskIndex = BYTE_SIZE - (bitPosition and (BYTE_SIZE - 1))
         var value = 0
-        this.bitPosition += i
+        bitPosition += i
         while (i > bitMaskIndex) {
-            value += data[byteOffset++].toInt() and BIT_MASK[bitMaskIndex] shl i - bitMaskIndex
+            value += (data[byteOffset++].toInt() and BIT_MASK[bitMaskIndex]) shl i - bitMaskIndex
             i -= bitMaskIndex
             bitMaskIndex = BYTE_SIZE
         }
@@ -213,6 +364,39 @@ public open class InputBuffer(data: ByteArray) : Buffer(data) {
             data[byteOffset].toInt() shr bitMaskIndex - i and BIT_MASK[i]
         }
         return value
+    }
+
+    fun decryptXTEA(keys: IntArray, start: Int, end: Int) {
+        val l = offset
+        offset = start
+        val i1 = (end - start) / 8
+        for (j1 in 0 until i1) {
+            var k1: Int = readInt()
+            var l1: Int = readInt()
+            var sum = -0x3910c8e0
+            val delta = -0x61c88647
+            var k2 = 32
+            while (k2-- > 0) {
+                l1 -= keys[sum and 0x1c84 ushr 11] + sum xor (k1 ushr 5 xor k1 shl 4) + k1
+                sum -= delta
+                k1 -= (l1 ushr 5 xor l1 shl 4) + l1 xor keys[sum and 3] + sum
+            }
+            val outputBuffer = toOutputBuffer()
+            outputBuffer.offset -= 8
+            outputBuffer.writeInt(k1).writeInt(l1)
+            data = outputBuffer.raw()
+        }
+        offset = l
+    }
+
+    @JvmOverloads
+    fun toOutputBuffer(copyOffset: Boolean = true): OutputBuffer {
+        val outputBuffer = OutputBuffer(0)
+        outputBuffer.writeBytes(data.clone())
+        if (copyOffset) {
+            outputBuffer.offset = offset
+        }
+        return outputBuffer
     }
 
     companion object {

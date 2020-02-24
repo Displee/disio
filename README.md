@@ -9,10 +9,12 @@ Features:
 * Signed and unsigned operations
 * Bit operations
 * LSB (least significant bit) and MSB (most significant bit) support
+* XTEA encryption and decryption
+* RSA cryption
 
 ## Gradle
 ```
-implementation 'com.displee:disio:1.0'
+implementation 'com.displee:disio:1.6'
 ```
 
 ### Initialization
@@ -47,4 +49,42 @@ val inputBuffer = InputBuffer(outputBuffer.array())
 inputBuffer.msb()
 val value = inputBuffer.readInt()
 ...
+```
+
+### Switch to different buffer type
+```kotlin
+val outputBuffer = OutputBuffer(0)
+outputBuffer.writeInt(4)
+val inputBuffer = outputBuffer.toInputBuffer(copyOffset = false)
+val value = inputBuffer.readInt()
+
+val inputBuffer = InputBuffer(byteArrayOf(1, 3, 3, 7))
+val value = inputBuffer.readInt()
+val outputBuffer = inputBuffer.toOutputBuffer()
+outputBuffer.writeShort(256)
+//now outputBuffer.raw() results in [1, 3, 3, 7, 1, 0]
+```
+
+### XTEA encryption and decryption
+```kotlin
+val value1 = 12 //random
+val value2 = 19238 //random
+val value3 = 99 //random
+val data = byteArrayOf(1, 3, 3, 4, 5, 6, 7, 8, 7, 6, 5)
+val keys = intArrayOf(9, 5, 6, 4)
+val outputBuffer = OutputBuffer(0)
+outputBuffer.write(value1)
+outputBuffer.writeInt(value2)
+val startOffset = outputBuffer.offset
+outputBuffer.write(data)
+outputBuffer.encodeXTEA(keys, startOffset, outputBuffer.offset)
+outputBuffer.write(value3)
+
+val inputBuffer = outputBuffer.toInputBuffer(false)
+assert(inputBuffer.read().toInt() == value1)
+assert(inputBuffer.readInt() == value2)
+inputBuffer.decodeXTEA(keys, startOffset, inputBuffer.raw().size)
+val decryptedData = inputBuffer.read(data.size)
+assert(decryptedData.contentEquals(data))
+assert(inputBuffer.read().toInt() == value3)
 ```
