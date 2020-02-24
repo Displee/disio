@@ -29,10 +29,9 @@ open class OutputBuffer(capacity: Int) : Buffer(capacity) {
     }
 
     fun writeBytes(bytes: ByteArray, offset: Int, size: Int): OutputBuffer {
-        ensureCapacity(size)
-        for (i in offset until size) {
-            writeByte(bytes[i])
-        }
+        ensureCapacity(size - offset)
+        System.arraycopy(bytes, offset, this.data, this.offset, size)
+        this.offset += size - offset
         return this
     }
 
