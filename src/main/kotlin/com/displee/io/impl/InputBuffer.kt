@@ -2,6 +2,7 @@ package com.displee.io.impl
 
 import com.displee.io.Buffer
 
+
 open class InputBuffer(data: ByteArray) : Buffer(data) {
 
     fun readByte(): Byte {
@@ -377,9 +378,9 @@ open class InputBuffer(data: ByteArray) : Buffer(data) {
             val delta = -0x61c88647
             var k2 = 32
             while (k2-- > 0) {
-                l1 -= keys[sum and 0x1c84 ushr 11] + sum xor (k1 ushr 5 xor k1 shl 4) + k1
+                l1 -= keys[sum and 0x1c84 ushr 11] + sum xor ((k1 ushr 5) xor (k1 shl 4)) + k1
                 sum -= delta
-                k1 -= (l1 ushr 5 xor l1 shl 4) + l1 xor keys[sum and 3] + sum
+                k1 -= ((l1 ushr 5) xor (l1 shl 4)) + l1 xor keys[sum and 3] + sum
             }
             val outputBuffer = toOutputBuffer()
             outputBuffer.offset -= 8

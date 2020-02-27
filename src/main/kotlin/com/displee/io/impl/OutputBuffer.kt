@@ -324,9 +324,9 @@ open class OutputBuffer(capacity: Int) : Buffer(capacity) {
             val delta = -0x61c88647
             var l1 = 32
             while (l1-- > 0) {
-                l += sum + keys[3 and sum] xor i1 + (i1 ushr 5 xor i1 shl 4)
+                l += sum + keys[3 and sum] xor i1 + ((i1 ushr 5) xor (i1 shl 4))
                 sum += delta
-                i1 += l + (l ushr 5 xor l shl 4) xor keys[0x1eec and sum ushr 11] + sum
+                i1 += l + ((l ushr 5) xor (l shl 4)) xor keys[0x1eec and sum ushr 11] + sum
             }
             offset -= 8
             writeInt(l)
