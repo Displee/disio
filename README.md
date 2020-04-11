@@ -1,6 +1,8 @@
 # DisIO
 DisIO is a lightweight standalone library which allows you to perform I/O operations on byte level, like Java's `ByteBuffer` class. However, there are a few problems I have with Java's `ByteBuffer` class which is why I created this library. Java's `ByteBuffer` class has a private constructor and two package private abstract methods. Meaning you can't inherit the class and create your own implementation.
 
+Of course, with Kotlin, this is not a problem since you can create extension methods. Nonetheless, it remains a problem in Java.
+
 The goal of this library is not alone to take away the limitations of Java's `ByteBuffer` class, but also to provide more I/O features on bit/byte level.
 
 Features:
