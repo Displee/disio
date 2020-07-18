@@ -338,6 +338,14 @@ open class InputBuffer(data: ByteArray) : Buffer(data) {
         return String(data, start, offset - start - 1)
     }
 
+    fun readStringNull(): String? {
+        if (data[offset].toInt() == 0) {
+            ++offset
+            return null
+        }
+        return readString()
+    }
+
     fun readIntAsFloat(): Float {
         return java.lang.Float.intBitsToFloat(readInt())
     }
