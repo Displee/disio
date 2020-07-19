@@ -16,7 +16,7 @@ Features:
 
 ## Gradle
 ```
-implementation 'com.displee:disio:1.6'
+implementation 'com.displee:disio:1.8'
 ```
 
 ### Initialization
