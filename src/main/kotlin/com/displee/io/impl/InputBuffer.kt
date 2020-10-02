@@ -294,6 +294,10 @@ open class InputBuffer(data: ByteArray) : Buffer(data) {
         return readUnsignedShort() - 32768
     }
 
+	fun readUnsignedSmartMin1(): Int {
+		return readUnsignedSmart() - 1
+	}
+
     fun readSmart2(): Int {
         var i = 0
         var v = readUnsignedSmart()

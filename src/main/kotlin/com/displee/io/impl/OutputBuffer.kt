@@ -243,6 +243,13 @@ open class OutputBuffer(capacity: Int) : Buffer(capacity) {
         return writeShort((value + 32768).toShort())
     }
 
+	fun writeUnsignedSmartPlus1(value: Int): OutputBuffer {
+		if (value < 128) {
+			return writeByte(value.toByte() + 1)
+		}
+		return writeShort((value + 32769).toShort())
+	}
+
     fun writeSmart2(i: Int): OutputBuffer {
         var value = i
         while (value >= Short.MAX_VALUE) {
