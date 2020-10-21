@@ -327,13 +327,13 @@ open class OutputBuffer(capacity: Int) : Buffer(capacity) {
             var l: Int = inputBuffer.readInt()
             var i1: Int = inputBuffer.readInt()
             offset = inputBuffer.offset
-            var sum = 0
-            val delta = -0x61c88647
+            var sum = 0L
+            val delta = -0x61c88647L
             var l1 = 32
             while (l1-- > 0) {
-                l += sum + keys[3 and sum] xor i1 + (i1 ushr 5 xor i1 shl 4)
+                l += ((sum + keys[(sum and 3L).toInt()]) xor (i1.toLong() + ((i1 ushr 5) xor (i1 shl 4)).toLong())).toInt()
                 sum += delta
-                i1 += l + (l ushr 5 xor l shl 4) xor keys[0x1eec and sum ushr 11] + sum
+                i1 += ((l + ((l ushr 5) xor (l shl 4))).toLong() xor (keys[((sum and 6451L) ushr 11).toInt()] + sum)).toInt()
             }
             offset -= 8
             writeInt(l)
