@@ -451,21 +451,26 @@ open class InputBuffer(data: ByteArray) : Buffer(data) {
             val chars = CharArray(length)
             var offset = 0
             for (i in 0 until length) {
-                var value = data[startOffset + i].toInt() and 0xFF
-                if (value == 0) {
-                    continue
-                }
-                if (value in 128..159) {
-                    var specialCharacter = SPECIAL_CHARACTERS[value - 128].toInt()
-                    if (specialCharacter == 0) {
-                        specialCharacter = 63
-                    }
-                    value = specialCharacter
-                }
-                chars[offset++] = value.toChar()
+	            val char = byteToChar(data[startOffset + i]) ?: continue
+                chars[offset++] = char
             }
             return String(chars, 0, offset)
         }
+
+	    fun byteToChar(value: Byte): Char? {
+			var v = value.toInt() and 0xFF
+		    if (v == 0) {
+			    return null
+		    }
+		    if (value in 128..159) {
+			    var specialCharacter = SPECIAL_CHARACTERS[value - 128].toInt()
+			    if (specialCharacter == 0) {
+				    specialCharacter = 63
+			    }
+			    v = specialCharacter
+		    }
+		    return v.toChar()
+	    }
     }
 
 }
