@@ -270,12 +270,7 @@ open class OutputBuffer(capacity: Int) : Buffer(capacity) {
         val length = value.length
         ensureCapacity(length + 1)
         for (i in 0 until length) {
-            val char = value[i]
-            if (char.toInt() > 0 && char < '\u0080' || char in '\u00a0'..'\u00ff') {
-                data[offset++] = char.toByte()
-            } else {
-                data[offset++] = (SPECIAL_CHARS_MAPPED[char] ?: 63).toByte()
-            }
+	        data[offset++] = charToByte(value[i])
         }
         writeByte(0)
         return this
@@ -381,6 +376,14 @@ open class OutputBuffer(capacity: Int) : Buffer(capacity) {
             '\u017e' to -98,
             '\u0178' to -97
         )
+
+	    fun charToByte(char: Char): Byte {
+		    return if (char.toInt() > 0 && char < '\u0080' || char in '\u00a0'..'\u00ff') {
+			    char.toByte()
+		    } else {
+			    (SPECIAL_CHARS_MAPPED[char] ?: 63).toByte()
+		    }
+	    }
     }
 
 }
